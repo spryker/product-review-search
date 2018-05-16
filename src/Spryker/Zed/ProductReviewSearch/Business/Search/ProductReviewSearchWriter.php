@@ -5,30 +5,65 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace Spryker\Zed\ProductReviewSearch\Communication\Plugin\Event\Listener;
+namespace Spryker\Zed\ProductReviewSearch\Business\Search;
 
 use Generated\Shared\Search\ProductReviewIndexMap;
 use Generated\Shared\Transfer\ProductReviewSearchTransfer;
 use Orm\Zed\ProductReview\Persistence\Map\SpyProductReviewTableMap;
 use Orm\Zed\ProductReview\Persistence\SpyProductReview;
 use Orm\Zed\ProductReviewSearch\Persistence\SpyProductReviewSearch;
-use Spryker\Zed\Event\Dependency\Plugin\EventBulkHandlerInterface;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
+use Spryker\Shared\Kernel\Store;
+use Spryker\Zed\ProductReviewSearch\Dependency\Service\ProductReviewSearchToUtilEncodingInterface;
+use Spryker\Zed\ProductReviewSearch\Persistence\ProductReviewSearchQueryContainerInterface;
 
-/**
- * @method \Spryker\Zed\ProductReviewSearch\Persistence\ProductReviewSearchQueryContainerInterface getQueryContainer()
- * @method \Spryker\Zed\ProductReviewSearch\Communication\ProductReviewSearchCommunicationFactory getFactory()
- */
-abstract class AbstractProductReviewSearchListener extends AbstractPlugin implements EventBulkHandlerInterface
+class ProductReviewSearchWriter implements ProductReviewSearchWriterInterface
 {
+    /**
+     * @var \Spryker\Zed\ProductReviewSearch\Persistence\ProductReviewSearchQueryContainerInterface
+     */
+    protected $queryContainer;
+
+    /**
+     * @var \Spryker\Zed\ProductReviewSearch\Dependency\Service\ProductReviewSearchToUtilEncodingInterface
+     */
+    protected $utilEncodingService;
+
+    /**
+     * @var \Spryker\Shared\Kernel\Store
+     */
+    protected $store;
+
+    /**
+     * @var bool
+     */
+    protected $isSendingToQueue = true;
+
+    /**
+     * @param \Spryker\Zed\ProductReviewSearch\Persistence\ProductReviewSearchQueryContainerInterface $queryContainer
+     * @param \Spryker\Zed\ProductReviewSearch\Dependency\Service\ProductReviewSearchToUtilEncodingInterface $utilEncodingService
+     * @param \Spryker\Shared\Kernel\Store $store
+     * @param bool $isSendingToQueue
+     */
+    public function __construct(
+        ProductReviewSearchQueryContainerInterface $queryContainer,
+        ProductReviewSearchToUtilEncodingInterface $utilEncodingService,
+        Store $store,
+        $isSendingToQueue
+    ) {
+        $this->queryContainer = $queryContainer;
+        $this->utilEncodingService = $utilEncodingService;
+        $this->store = $store;
+        $this->isSendingToQueue = $isSendingToQueue;
+    }
+
     /**
      * @param array $productReviewIds
      *
      * @return void
      */
-    protected function publish(array $productReviewIds)
+    public function publish(array $productReviewIds)
     {
-        $productReviewEntities = $this->getQueryContainer()->queryProductReviewsByIdProductReviews($productReviewIds)->find()->getData();
+        $productReviewEntities = $this->queryContainer->queryProductReviewsByIdProductReviews($productReviewIds)->find()->getData();
         $productReviewSearchEntitiesByProductReviewIds = $this->findProductReviewSearchEntitiesByProductReviewIds($productReviewIds);
 
         if (!$productReviewEntities) {
@@ -36,6 +71,19 @@ abstract class AbstractProductReviewSearchListener extends AbstractPlugin implem
         }
 
         $this->storeData($productReviewEntities, $productReviewSearchEntitiesByProductReviewIds);
+    }
+
+    /**
+     * @param array $productReviewIds
+     *
+     * @return void
+     */
+    public function unpublish(array $productReviewIds)
+    {
+        $productReviewSearchEntities = $this->findProductReviewSearchEntitiesByProductReviewIds($productReviewIds);
+        foreach ($productReviewSearchEntities as $productReviewSearchEntity) {
+            $productReviewSearchEntity->delete();
+        }
     }
 
     /**
@@ -62,9 +110,11 @@ abstract class AbstractProductReviewSearchListener extends AbstractPlugin implem
             $idProductReview = $productReviewEntity->getIdProductReview();
             if (isset($spyProductReviewSearchEntities[$idProductReview])) {
                 $this->storeDataSet($productReviewEntity, $spyProductReviewSearchEntities[$idProductReview]);
-            } else {
-                $this->storeDataSet($productReviewEntity, null);
+
+                continue;
             }
+
+            $this->storeDataSet($productReviewEntity, null);
         }
     }
 
@@ -92,8 +142,8 @@ abstract class AbstractProductReviewSearchListener extends AbstractPlugin implem
 
         $spyProductReviewSearchEntity->setFkProductReview($productReviewEntity->getIdProductReview());
         $spyProductReviewSearchEntity->setData($result);
-        $spyProductReviewSearchEntity->setStructuredData($this->getFactory()->getUtilEncoding()->encodeJson($productReviewEntity->toArray()));
-        $spyProductReviewSearchEntity->setStore($this->getStore()->getStoreName());
+        $spyProductReviewSearchEntity->setStructuredData($this->utilEncodingService->encodeJson($productReviewEntity->toArray()));
+        $spyProductReviewSearchEntity->setIsSendingToQueue($this->isSendingToQueue);
         $spyProductReviewSearchEntity->save();
     }
 
@@ -105,7 +155,7 @@ abstract class AbstractProductReviewSearchListener extends AbstractPlugin implem
     protected function mapToSearchData(SpyProductReview $productReviewEntity)
     {
         return [
-            ProductReviewIndexMap::STORE => $this->getStore()->getStoreName(),
+            ProductReviewIndexMap::STORE => $this->store->getStoreName(),
             ProductReviewIndexMap::ID_PRODUCT_ABSTRACT => $productReviewEntity->getFkProductAbstract(),
             ProductReviewIndexMap::RATING => $productReviewEntity->getRating(),
             ProductReviewIndexMap::SEARCH_RESULT_DATA => $this->getSearchResultData($productReviewEntity),
@@ -120,21 +170,13 @@ abstract class AbstractProductReviewSearchListener extends AbstractPlugin implem
      */
     protected function findProductReviewSearchEntitiesByProductReviewIds(array $productReviewIds)
     {
-        $productReviewSearchEntities = $this->getQueryContainer()->queryProductReviewSearchByIds($productReviewIds)->find();
+        $productReviewSearchEntities = $this->queryContainer->queryProductReviewSearchByIds($productReviewIds)->find();
         $productReviewSearchReviewEntitiesById = [];
         foreach ($productReviewSearchEntities as $productReviewReviewSearchEntity) {
             $productReviewSearchReviewEntitiesById[$productReviewReviewSearchEntity->getFkProductReview()] = $productReviewReviewSearchEntity;
         }
 
         return $productReviewSearchReviewEntitiesById;
-    }
-
-    /**
-     * @return \Spryker\Shared\Kernel\Store
-     */
-    protected function getStore()
-    {
-        return $this->getFactory()->getStore();
     }
 
     /**
