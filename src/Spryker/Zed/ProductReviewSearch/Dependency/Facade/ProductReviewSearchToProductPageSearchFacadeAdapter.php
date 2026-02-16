@@ -29,6 +29,7 @@ class ProductReviewSearchToProductPageSearchFacadeAdapter implements ProductRevi
      */
     public function publishWithTimestamp(array $productAbstractIdTimestampMap): void
     {
+        // @phpstan-ignore function.alreadyNarrowedType (BC for supporting old majors of ProductPageSearch module)
         if (!method_exists($this->productPageSearchFacade, 'publishWithTimestamp') === false) {
             $this->productPageSearchFacade->refresh(array_keys($productAbstractIdTimestampMap));
         }
