@@ -5,7 +5,7 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace SprykerTest\Zed\ProductReviewSearch\Plugin\Search;
+namespace SprykerTest\Client\ProductReviewSearch\Plugin\Search;
 
 use Codeception\Test\Unit;
 use Elastica\Query\BoolQuery;
@@ -17,7 +17,7 @@ use SprykerTest\Client\ProductReviewSearch\ProductReviewSearchClientTester;
  * Auto-generated group annotations
  *
  * @group SprykerTest
- * @group Zed
+ * @group Client
  * @group ProductReviewSearch
  * @group Plugin
  * @group Search
