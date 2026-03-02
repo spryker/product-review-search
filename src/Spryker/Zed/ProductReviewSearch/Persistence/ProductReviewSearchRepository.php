@@ -22,11 +22,6 @@ class ProductReviewSearchRepository extends AbstractRepository implements Produc
 
     protected const FIELD_REVIEW_COUNT = ProductPayloadTransfer::REVIEW_COUNT;
 
-    /**
-     * @param array $abstractProductIds
-     *
-     * @return array
-     */
     public function getProductReviewRatingByIdAbstractProductIn(array $abstractProductIds): array
     {
         /** @var \Propel\Runtime\Collection\ArrayCollection $productReviewRatings */

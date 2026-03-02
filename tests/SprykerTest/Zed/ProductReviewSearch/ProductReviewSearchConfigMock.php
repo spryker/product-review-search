@@ -11,9 +11,6 @@ use Spryker\Zed\ProductReviewSearch\ProductReviewSearchConfig;
 
 class ProductReviewSearchConfigMock extends ProductReviewSearchConfig
 {
-    /**
-     * @return bool
-     */
     public function isSendingToQueue(): bool
     {
         return false;

@@ -16,11 +16,6 @@ class ProductReviewKeyBuilder implements ProductReviewKeyBuilderInterface
      */
     protected const RESOURCE_TYPE_PRODUCT_REVIEW = 'product_review';
 
-    /**
-     * @param string $idProductReview
-     *
-     * @return string
-     */
     public function buildKey(string $idProductReview): string
     {
         return sprintf(

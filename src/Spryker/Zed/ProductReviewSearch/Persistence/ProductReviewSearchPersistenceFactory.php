@@ -35,9 +35,6 @@ class ProductReviewSearchPersistenceFactory extends AbstractPersistenceFactory
         return $this->getProvidedDependency(ProductReviewSearchDependencyProvider::QUERY_CONTAINER_PRODUCT_REVIEW);
     }
 
-    /**
-     * @return \Orm\Zed\ProductReview\Persistence\SpyProductReviewQuery
-     */
     public function getPropelProductReviewQuery(): SpyProductReviewQuery
     {
         return $this->getProvidedDependency(ProductReviewSearchDependencyProvider::PROPEL_QUERY_PRODUCT_REVIEW);

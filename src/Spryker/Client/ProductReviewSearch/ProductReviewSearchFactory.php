@@ -13,9 +13,6 @@ use Spryker\Client\ProductReviewSearch\Builder\ProductReviewKeyBuilderInterface;
 
 class ProductReviewSearchFactory extends AbstractFactory
 {
-    /**
-     * @return \Spryker\Client\ProductReviewSearch\Builder\ProductReviewKeyBuilderInterface
-     */
     public function createProductReviewKeyBuilder(): ProductReviewKeyBuilderInterface
     {
         return new ProductReviewKeyBuilder();

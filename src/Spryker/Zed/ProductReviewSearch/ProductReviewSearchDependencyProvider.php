@@ -93,11 +93,6 @@ class ProductReviewSearchDependencyProvider extends AbstractBundleDependencyProv
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addPropelProductReviewQuery(Container $container): Container
     {
         $container->set(static::PROPEL_QUERY_PRODUCT_REVIEW, $container->factory(function (): SpyProductReviewQuery {
@@ -107,11 +102,6 @@ class ProductReviewSearchDependencyProvider extends AbstractBundleDependencyProv
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addUtilEncodingService(Container $container): Container
     {
         $container->set(static::SERVICE_UTIL_ENCODING, function (Container $container) {

@@ -9,10 +9,5 @@ namespace Spryker\Client\ProductReviewSearch\Builder;
 
 interface ProductReviewKeyBuilderInterface
 {
-    /**
-     * @param string $idProductReview
-     *
-     * @return string
-     */
     public function buildKey(string $idProductReview): string;
 }

@@ -78,9 +78,6 @@ class FilterByIdProductReviewQueryExpanderPluginTest extends Unit
      */
     protected ProductReviewSearchClientTester $tester;
 
-    /**
-     * @return void
-     */
     public function testExpandQueryShouldNotAddFilterWhenIdProductReviewParamIsNotProvided(): void
     {
         // Arrange
@@ -95,9 +92,6 @@ class FilterByIdProductReviewQueryExpanderPluginTest extends Unit
         $this->assertFalse($resultBoolQuery->hasParam(static::QUERY_PARAM_FILTER));
     }
 
-    /**
-     * @return void
-     */
     public function testExpandQueryShouldAddFilterWhenIdProductReviewParamIsProvided(): void
     {
         // Arrange

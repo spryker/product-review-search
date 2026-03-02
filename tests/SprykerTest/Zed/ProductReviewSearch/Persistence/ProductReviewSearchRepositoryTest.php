@@ -36,9 +36,6 @@ class ProductReviewSearchRepositoryTest extends Unit
      */
     protected $tester;
 
-    /**
-     * @return void
-     */
     public function testGetProductReviewRatingByIdAbstractProductInReturnsCorrectData(): void
     {
         // Arrange

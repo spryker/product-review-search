@@ -56,12 +56,6 @@ class FilterByIdProductReviewQueryExpanderPlugin extends AbstractPlugin implemen
         return $searchQuery;
     }
 
-    /**
-     * @param \Elastica\Query $query
-     * @param string $idProductReview
-     *
-     * @return void
-     */
     protected function expandQueryWithProductReviewFilter(Query $query, string $idProductReview): void
     {
         $boolQuery = $this->getBoolQuery($query);
@@ -91,11 +85,6 @@ class FilterByIdProductReviewQueryExpanderPlugin extends AbstractPlugin implemen
         return $boolQuery;
     }
 
-    /**
-     * @param string $idProductReview
-     *
-     * @return \Elastica\Query\BoolQuery
-     */
     protected function createIdProductReviewBoolQuery(string $idProductReview): BoolQuery
     {
         $filter = (new Term())

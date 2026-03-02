@@ -37,9 +37,6 @@ class ProductReviewSearchListenerTest extends Unit
      */
     protected $tester;
 
-    /**
-     * @return void
-     */
     public function testProductReviewSearchListenerStoreData(): void
     {
         $beforeCount = SpyProductReviewSearchQuery::create()->count();
@@ -87,9 +84,6 @@ class ProductReviewSearchListenerTest extends Unit
         );
     }
 
-    /**
-     * @return \Spryker\Zed\ProductReviewSearch\Business\ProductReviewSearchFacade
-     */
     protected function getProductReviewSearchFacade(): ProductReviewSearchFacade
     {
         $factory = new ProductReviewSearchBusinessFactory();

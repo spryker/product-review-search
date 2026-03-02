@@ -9,10 +9,5 @@ namespace Spryker\Zed\ProductReviewSearch\Persistence;
 
 interface ProductReviewSearchRepositoryInterface
 {
-    /**
-     * @param array $abstractProductIds
-     *
-     * @return array
-     */
     public function getProductReviewRatingByIdAbstractProductIn(array $abstractProductIds): array;
 }
