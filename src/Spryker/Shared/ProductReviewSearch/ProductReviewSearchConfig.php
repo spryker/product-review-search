@@ -49,4 +49,14 @@ class ProductReviewSearchConfig extends AbstractBundleConfig
      * @var string
      */
     public const PRODUCT_REVIEW_SYNC_SEARCH_ERROR_QUEUE = 'sync.search.product.error';
+
+    /**
+     * Specification:
+     * - Queue name used for product review search publish events.
+     *
+     * @api
+     *
+     * @var string
+     */
+    public const string PUBLISH_PRODUCT_REVIEW_QUEUE = 'publish.product_review';
 }
