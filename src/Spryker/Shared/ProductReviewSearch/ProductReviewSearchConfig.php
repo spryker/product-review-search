@@ -7,9 +7,9 @@
 
 namespace Spryker\Shared\ProductReviewSearch;
 
-use Spryker\Shared\Kernel\AbstractBundleConfig;
+use Spryker\Shared\Kernel\AbstractSharedConfig;
 
-class ProductReviewSearchConfig extends AbstractBundleConfig
+class ProductReviewSearchConfig extends AbstractSharedConfig
 {
     /**
      * Specification:
